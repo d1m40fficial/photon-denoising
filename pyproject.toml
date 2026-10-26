@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "photon-clean"
+version = "1.0.0"
+description = "Static-background subtraction and hot-pixel removal for photon-counting camera frames"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "D. Belousov" }]
+keywords = ["image-processing", "photon-counting", "background-subtraction", "hot-pixels", "opencv"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "numpy>=1.26",
+    "opencv-python-headless>=4.9",
+    "scikit-image>=0.22",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+figures = ["matplotlib>=3.8"]
+
+[project.scripts]
+photon-clean = "photon_clean.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

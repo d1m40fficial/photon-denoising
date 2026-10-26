@@ -1,0 +1,19 @@
+{
+  "frame_shape": [
+    1040,
+    1360
+  ],
+  "pixels": 1414400,
+  "repeats": 5,
+  "loop_seconds": 0.43573860000105924,
+  "vectorised_seconds": 0.011887200000273879,
+  "full_pipeline_seconds": 0.03919000000132655,
+  "speedup": 36.65611750378726,
+  "identical": true,
+  "differing_pixels": 0,
+  "loop_fps": 2.2949539012554068,
+  "vectorised_fps": 84.12409987019316,
+  "pipeline_fps": 25.516713446444264,
+  "throughput_mpx_per_s": 118.98512685640122,
+  "original_notebook_fps": 1.2
+}

@@ -1,0 +1,9 @@
+# Runtime dependencies of the photon_clean package.
+# Tested with Python 3.14 on Windows 11 and Linux.
+numpy>=1.26
+opencv-python-headless>=4.9
+scikit-image>=0.22
+pillow>=10.0
+
+# Only needed to regenerate the figures in assets/.
+matplotlib>=3.8

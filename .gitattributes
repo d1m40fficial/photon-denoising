@@ -1,0 +1,9 @@
+# Normalise line endings to LF in the repository itself.
+* text=auto eol=lf
+
+# Binary assets must never be converted.
+*.png binary
+*.jpg binary
+*.bmp binary
+*.tif binary
+*.ipynb text eol=lf
