@@ -1,0 +1,71 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: unit tests (python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+  reproduce:
+    name: reproduce README numbers
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Evaluate the shipped sample
+        run: python scripts/evaluate.py
+
+      - name: Benchmark
+        run: python scripts/benchmark.py --repeats 3
+
+      - name: Show the headline numbers
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          metrics = json.loads(pathlib.Path("results/metrics.json").read_text())
+          bench = json.loads(pathlib.Path("results/benchmark.json").read_text())
+          print(f"background PSNR      {metrics['background']['psnr_db']:.2f} dB")
+          print(f"background SSIM      {metrics['background']['ssim']:.4f}")
+          print(f"non-zero share       {metrics['cleaning']['stages']['median']['nonzero_share']:.2%}")
+          print(f"events per frame     {metrics['cleaning']['stages']['median']['events_per_frame']:.0f}")
+          print(f"fidelity (exact px)  {metrics['fidelity']['mean_pixels_exact_share']:.4%}")
+          print(f"speed-up             {bench['speedup']:.0f}x")
+          assert metrics["fidelity"]["mean_pixels_exact_share"] > 0.999
+          assert bench["identical"] is True
+          print("all assertions passed")
+          PY

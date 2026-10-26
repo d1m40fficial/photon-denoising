@@ -2,6 +2,7 @@
 
 [English](README.md) · **Русский**
 
+[![tests](https://github.com/d1m40fficial/photon-denoising/actions/workflows/tests.yml/badge.svg)](https://github.com/d1m40fficial/photon-denoising/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![OpenCV](https://img.shields.io/badge/vectorised%20with-OpenCV-5c3ee8?logo=opencv&logoColor=white)](https://opencv.org/)
 [![Throughput](https://img.shields.io/badge/%E2%89%8825--30%20%D0%BA%D0%B0%D0%B4%D1%80%2F%D1%81-0969da)](#%D1%81%D0%BA%D0%BE%D1%80%D0%BE%D1%81%D1%82%D1%8C)
