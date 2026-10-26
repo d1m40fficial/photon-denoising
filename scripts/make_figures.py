@@ -629,6 +629,72 @@ def figure_benchmark() -> None:
     plt.close(fig)
 
 
+def figure_social_preview(metrics: dict) -> None:
+    """1280x640 card for GitHub Settings -> Social preview (not used in the README)."""
+    frames = list_images(str(DATA / "frames"))
+    background = _background(frames)
+    raw = load_gray(frames[0])
+    sub = subtract_background(raw, background)
+    clean = median(remove_anomalous_clusters(remove_hot_pixels(sub)), disk(1)).astype(np.uint8)
+
+    speedup = "37x"
+    bench_path = RESULTS / "benchmark.json"
+    if bench_path.exists():
+        speedup = f"{json.loads(bench_path.read_text(encoding='utf-8'))['speedup']:.0f}x"
+
+    fig = plt.figure(figsize=(12.8, 6.4), dpi=100)
+    fig.patch.set_facecolor("white")
+    fig.add_artist(
+        plt.Rectangle((0, 0), 0.012, 1, transform=fig.transFigure, facecolor=BLUE, edgecolor="none")
+    )
+
+    fig.text(0.055, 0.885, "Photon frame cleaning", fontsize=30, fontweight="bold", color=INK, va="top")
+    fig.text(
+        0.055, 0.775,
+        "Removing a static sensor pedestal and hot pixels\nfrom 8-bit photon-counting camera frames",
+        fontsize=14.5, color=MUTED, va="top", linespacing=1.55,
+    )
+
+    stats = [
+        (f"{metrics['background']['psnr_db']:.1f} dB", "background estimate vs an\nindependent exposure"),
+        ("100 %", "of the energy above 50 ADU\nis preserved"),
+        (speedup, "faster than the per-pixel\nreference loop"),
+    ]
+    y = 0.545
+    for value, label in stats:
+        fig.text(0.055, y, value, fontsize=24, fontweight="bold", color=BLUE, va="center")
+        fig.text(0.235, y, label, fontsize=10.5, color=MUTED, va="center", linespacing=1.45)
+        y -= 0.135
+
+    fig.text(
+        0.055, 0.075, "github.com/d1m40fficial/photon-denoising",
+        fontsize=10.5, color=MUTED, va="center",
+    )
+
+    crop = (slice(400, 600), slice(480, 880))
+    panels = [(raw, "raw frame  ·  3 ADU pedestal"), (clean, "after cleaning  ·  310 events")]
+    for index, (image, label) in enumerate(panels):
+        y0 = 0.48 - index * 0.46
+        ax = fig.add_axes([0.52, y0, 0.42, 0.42])
+        ax.imshow(
+            image[crop], cmap="gray", interpolation="nearest",
+            norm=matplotlib.colors.PowerNorm(gamma=0.45, vmin=0, vmax=60),
+        )
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_color(GRID)
+            spine.set_linewidth(0.8)
+        ax.text(
+            0.022, 0.95, label, transform=ax.transAxes, va="top", ha="left",
+            fontsize=9.5, color="white",
+            bbox=dict(boxstyle="round,pad=0.35", facecolor="#00000088", edgecolor="none"),
+        )
+
+    fig.savefig(ASSETS / "social_preview.png", dpi=100, facecolor="white")
+    plt.close(fig)
+
+
 def main() -> int:
     style()
     ASSETS.mkdir(parents=True, exist_ok=True)
@@ -650,6 +716,8 @@ def main() -> int:
     figure_unet(metrics)
     print("benchmark ...")
     figure_benchmark()
+    print("social preview ...")
+    figure_social_preview(metrics)
 
     for file in sorted(ASSETS.glob("*.png")):
         print(f"  {file.name:<28}{file.stat().st_size / 1024:7.0f} KB")
